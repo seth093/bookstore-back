@@ -21,10 +21,14 @@ export default function Authors() {
       .then(data => setAuthors(data))
   }, [])
 
-  const deleteAuthor = async (id: number) => {
+  const deleteAuthor = async (id:number) => {
 
-    await fetch(`http://127.0.0.1:8080/api/authors/${id}`, {
-      method: "DELETE"
+    const confirmDelete = confirm("¿Eliminar autor?")
+
+    if(!confirmDelete) return
+
+    await fetch(`http://127.0.0.1:8080/api/authors/${id}`,{
+      method:"DELETE"
     })
 
     setAuthors(authors.filter(a => a.id !== id))
@@ -32,43 +36,73 @@ export default function Authors() {
 
   return (
 
-    <div>
+    <div className="min-h-screen bg-gray-100 p-10">
 
-      <h1>Lista de Autores</h1>
+      <div className="max-w-4xl mx-auto">
 
-      <Link href="/crear">
-        Crear Autor
-      </Link>
+        <div className="flex justify-between items-center mb-8">
 
-      <ul>
+          <h1 className="text-3xl font-bold">
+            Autores
+          </h1>
 
-        {authors.map((author) => (
+          <Link
+            href="/crear"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Crear Autor
+          </Link>
 
-          <li key={author.id} style={{ marginBottom: "20px" }}>
+        </div>
 
-            <img
-              src={author.image}
-              width="120"
-              alt={author.name}
-            />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            <h3>{author.name}</h3>
+          {authors.map((author) => (
 
-            <p>{author.description}</p>
+            <div
+              key={author.id}
+              className="bg-white p-6 rounded-xl shadow-md"
+            >
 
-            <Link href={`/editar/${author.id}`}>
-              Editar
-            </Link>
+              <img
+                src={author.image}
+                alt={author.name}
+                className="w-full h-40 object-cover rounded mb-4"
+              />
 
-            <button onClick={() => deleteAuthor(author.id)}>
-              Eliminar
-            </button>
+              <h2 className="text-xl font-semibold">
+                {author.name}
+              </h2>
 
-          </li>
+              <p className="text-gray-600 mb-4">
+                {author.description}
+              </p>
 
-        ))}
+              <div className="flex gap-3">
 
-      </ul>
+                <Link
+                  href={`/editar/${author.id}`}
+                  className="bg-yellow-400 px-3 py-1 rounded"
+                >
+                  Editar
+                </Link>
+
+                <button
+                  onClick={()=>deleteAuthor(author.id)}
+                  className="bg-red-500 text-white px-3 py-1 rounded"
+                >
+                  Eliminar
+                </button>
+
+              </div>
+
+            </div>
+
+          ))}
+
+        </div>
+
+      </div>
 
     </div>
   )
