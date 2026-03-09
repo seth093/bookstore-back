@@ -14,6 +14,7 @@ type Author = {
 export default function Authors() {
 
   const [authors, setAuthors] = useState<Author[]>([])
+  const [search, setSearch] = useState("")
 
   useEffect(() => {
     fetch("http://127.0.0.1:8080/api/authors")
@@ -33,6 +34,11 @@ export default function Authors() {
 
     setAuthors(authors.filter(a => a.id !== id))
   }
+
+  
+  const filteredAuthors = authors.filter(author =>
+    author.name.toLowerCase().includes(search.toLowerCase())
+  )
 
   return (
 
@@ -55,9 +61,27 @@ export default function Authors() {
 
         </div>
 
+      
+        <div className="mb-8">
+          <input
+            type="text"
+            placeholder="Buscar autor por nombre..."
+            value={search}
+            onChange={(e)=>setSearch(e.target.value)}
+            className="w-full p-3 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+
+       
+        {filteredAuthors.length === 0 && (
+          <div className="bg-white p-6 rounded-xl shadow text-center text-gray-600">
+            No se encontraron coincidencias
+          </div>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          {authors.map((author) => (
+          {filteredAuthors.map((author) => (
 
             <div
               key={author.id}
@@ -82,14 +106,14 @@ export default function Authors() {
 
                 <Link
                   href={`/editar/${author.id}`}
-                  className="bg-yellow-400 px-3 py-1 rounded"
+                  className="bg-yellow-400 px-3 py-1 rounded hover:bg-yellow-500"
                 >
                   Editar
                 </Link>
 
                 <button
                   onClick={()=>deleteAuthor(author.id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded"
+                  className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                 >
                   Eliminar
                 </button>
